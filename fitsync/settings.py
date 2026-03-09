@@ -77,14 +77,25 @@ WSGI_APPLICATION = 'fitsync.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 import os
+import dj_database_url
 
 if 'VERCEL' in os.environ:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': ':memory:',
+    # Use Vercel Postgres if available, otherwise fallback to in-memory
+    if 'POSTGRES_URL' in os.environ:
+        DATABASES = {
+            'default': dj_database_url.config(
+                default=os.environ.get('POSTGRES_URL'),
+                conn_max_age=600,
+                ssl_require=True
+            )
         }
-    }
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': ':memory:',
+            }
+        }
 else:
     DATABASES = {
         'default': {
