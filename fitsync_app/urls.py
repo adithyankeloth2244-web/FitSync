@@ -132,4 +132,5 @@ urlpatterns = [
 
     # Brand Details
     path('why-fitsync/', views.why_fitsync_view, name='why_fitsync'),
+    path('migrate/', views.migrate_db_view, name='migrate_db'),
 ]

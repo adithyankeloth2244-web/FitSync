@@ -2595,3 +2595,17 @@ def why_fitsync_view(request):
         }
     ]
     return render(request, 'fitsync_app/why_fitsync.html', {'benefits': benefits})
+
+def migrate_db_view(request):
+    """Temporary view to trigger database migrations on Vercel."""
+    from django.core.management import call_command
+    from django.http import HttpResponse
+    
+    # Only allow if a secret key is provided in URL to prevent abuse
+    if request.GET.get('key') == 'fitsync_deploy_2026':
+        try:
+            call_command('migrate', interactive=False)
+            return HttpResponse("✅ Migrations completed successfully!")
+        except Exception as e:
+            return HttpResponse(f"❌ Error: {str(e)}")
+    return HttpResponse("Unauthorized", status=401)
